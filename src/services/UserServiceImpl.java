@@ -22,6 +22,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public RegisterResponse register(RegisterRequest registerRequest) {
         try {
+            validateDob(registerRequest.getDateOfBirth());
             for (User user : users) {
                 if (user.getUsername().equals(registerRequest.getUsername())) {
                     JOptionPane.showMessageDialog(null, "Username already exists, try another username.");
@@ -34,10 +35,16 @@ public class UserServiceImpl implements UserService {
             String message = "User successfully created";
             JOptionPane.showMessageDialog(null, message);
             return new RegisterResponse(message, user.getUsername());
-        } catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException  ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());
             throw ex;
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    private void validateDob(String dateOfBirth) throws IllegalAccessException {
+        if (!dateOfBirth.contains("-")) throw new IllegalArgumentException("wrong format ");
     }
 
     @Override
